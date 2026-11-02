@@ -183,7 +183,8 @@ tritonKmRequestResidency(TRITON_KM *km, D3DKMT_HANDLE hAllocation)
 BOOL
 tritonKmFillSharedExchange(VIOGPU_CREATE_ALLOCATION_EXCHANGE *ax,
                            void *pResourceWrapper,
-                           const TRITON_KM_SHARED_DESC *d, BOOL primary)
+                           const TRITON_KM_SHARED_DESC *d, BOOL primary,
+                           UINT primarySource)
 {
    memset(ax, 0, sizeof(*ax));
    ax->Type = VIOGPU_RESOURCE_TYPE_SHARED;
@@ -207,7 +208,10 @@ tritonKmFillSharedExchange(VIOGPU_CREATE_ALLOCATION_EXCHANGE *ax,
       o->planes[i].pitch  = exp.planes[i].pitch;
    }
 
-   o->primary          = primary ? 1u : 0u;
+   o->primary          = primary ? VIOGPU_SHARED_PRIMARY : 0u;
+   if (primary && primarySource != TRITON_SOURCE_UNKNOWN && primarySource < 256)
+      o->primary |= VIOGPU_SHARED_PRIMARY_SOURCE_VALID |
+                    (primarySource << VIOGPU_SHARED_PRIMARY_SOURCE_SHIFT);
    o->width            = (ULONG)d->Width;
    o->height           = d->Height;
    o->mip_levels       = d->MipLevels ? d->MipLevels : 1;

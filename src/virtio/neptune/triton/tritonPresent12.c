@@ -71,7 +71,8 @@ triton12RegisterSharedBlob(PTRITON12_DEVICE p, PTRITON12_RESOURCE r,
     d.MiscFlags      = D3D11_RESOURCE_MISC_SHARED;
 
     VIOGPU_CREATE_ALLOCATION_EXCHANGE ax;
-    if (!tritonKmFillSharedExchange(&ax, pSurf, &d, primary))
+    /* D3D12 names no monitor for a primary heap: the KMD works it out. */
+    if (!tritonKmFillSharedExchange(&ax, pSurf, &d, primary, TRITON_SOURCE_UNKNOWN))
         return FALSE;
 
     D3D12DDI_ALLOCATION_INFO_0022 ai;

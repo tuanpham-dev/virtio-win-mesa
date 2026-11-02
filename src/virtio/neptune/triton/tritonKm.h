@@ -73,11 +73,14 @@ typedef struct TRITON_KM_SHARED_DESC {
 /* Export the host texture behind pResourceWrapper (a Neptune COM wrapper)
  * as this context's pending blob and fill the VIOGPU_RESOURCE_TYPE_SHARED
  * private data the caller hands to its pfnAllocateCb.  primary marks a
- * flippable scanout primary.  Returns FALSE when the export fails. */
+ * flippable scanout primary; primarySource is the VidPn source (monitor) it
+ * is for, or TRITON_SOURCE_UNKNOWN when the runtime doesn't say.  Returns
+ * FALSE when the export fails. */
+#define TRITON_SOURCE_UNKNOWN 0xFFFFFFFFu
 BOOL tritonKmFillSharedExchange(VIOGPU_CREATE_ALLOCATION_EXCHANGE *ax,
                                 void *pResourceWrapper,
                                 const TRITON_KM_SHARED_DESC *d,
-                                BOOL primary);
+                                BOOL primary, UINT primarySource);
 
 #ifdef __cplusplus
 }

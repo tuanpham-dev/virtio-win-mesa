@@ -148,7 +148,8 @@ tritonRegisterSharedBlob(PTRITON_DEVICE pD, PTRITON_RESOURCE r,
     d.MiscFlags      = d3d11Misc;
 
     VIOGPU_CREATE_ALLOCATION_EXCHANGE ax;
-    if (!tritonKmFillSharedExchange(&ax, pTex, &d, primary))
+    if (!tritonKmFillSharedExchange(&ax, pTex, &d, primary,
+                                    primary ? r->VidPnSourceId : TRITON_SOURCE_UNKNOWN))
         return FALSE;
 
     D3DDDI_ALLOCATIONINFO2 ai;
@@ -157,7 +158,9 @@ tritonRegisterSharedBlob(PTRITON_DEVICE pD, PTRITON_RESOURCE r,
     ai.PrivateDriverDataSize = sizeof(ax);
     if (primary) {
         ai.Flags.Primary = 1;
-        ai.VidPnSourceId = 0;
+        ai.VidPnSourceId = r->VidPnSourceId;
+        TR_LOG("shared: primary %ux%u for VidPn source %u", r->Width, r->Height,
+               r->VidPnSourceId);
     }
 
     D3DDDICB_ALLOCATE cb;
@@ -213,6 +216,7 @@ tritonCreateResource(D3D10DDI_HDEVICE hDevice,
      * as ordinary shared textures and that must never claim the scanout. */
     r->IsPresentable    = !!(pArgs->BindFlags & D3D10_DDI_BIND_PRESENT) &&
                           pArgs->pPrimaryDesc != NULL;
+    r->VidPnSourceId    = pArgs->pPrimaryDesc ? pArgs->pPrimaryDesc->VidPnSourceId : 0;
     r->hKMAllocation    = 0;
     r->IsShared         = FALSE;
     r->hImportAlloc     = 0;

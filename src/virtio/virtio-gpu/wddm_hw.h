@@ -413,6 +413,14 @@ typedef struct _VIOGPU_RESOURCE_IMPORT_OPTIONS
 // data so an opening process's UMD can rebuild the texture (paired with
 // the res_id from VIOGPU_RES_INFO) via SHARED_OPEN_RES.
 // Keep in lockstep with kvm-guest-drivers-windows/viogpu/shared/viogpum.h.
+//
+// `primary` is a flag word: bit 0 marks a flippable scanout primary; when
+// bit 1 (SOURCE_VALID) is also set, bits 8..15 name the VidPn source (the
+// monitor) the primary is for.  A UMD that only sets bit 0 (older builds)
+// leaves the monitor to the KMD to work out.
+#define VIOGPU_SHARED_PRIMARY              0x1u
+#define VIOGPU_SHARED_PRIMARY_SOURCE_VALID 0x2u
+#define VIOGPU_SHARED_PRIMARY_SOURCE_SHIFT 8
 #pragma pack(1)
 typedef struct _VIOGPU_RESOURCE_SHARED_TEXTURE_OPTIONS
 {

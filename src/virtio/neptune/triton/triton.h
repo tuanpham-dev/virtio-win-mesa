@@ -315,6 +315,12 @@ typedef struct TRITON_RESOURCE {
      * via SET_SCANOUT_BLOB. */
     BOOL                   IsPresentable;
 
+    /* The VidPn source (monitor) pPrimaryDesc names for a display primary.
+     * The KM allocation, and the KMD's scanout latch, must be for that
+     * source: a primary tagged with another monitor's source is refused
+     * when DWM presents it there. */
+    UINT                   VidPnSourceId;
+
     /* KM allocation backing this resource's virtio-gpu blob (shared
      * textures and primaries; 0 otherwise).  Owned by the creator;
      * consumers leave it 0 (the runtime owns their opened allocation). */
